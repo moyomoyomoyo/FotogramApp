@@ -62,15 +62,3 @@ data class NewPost(
     val contentPicture: String,
     val location: LocationDto? = null
 )
-
-@Serializable
-data class PostReactions(
-    val hearts: Int,
-    val likes: Int,
-    val dislikes: Int
-)
-
-@Serializable
-data class ReactionToPost(
-    val reaction: String
-)

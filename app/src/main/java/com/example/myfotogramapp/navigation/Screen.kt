@@ -4,5 +4,7 @@ enum class Screen {
     FEED,
     CREATE_POST,
     PROFILE,
-    POST_DETAIL
+    POST_DETAIL,
+    PROFILE_SETTINGS,
+    PROFILE_OTHER_USER
 }

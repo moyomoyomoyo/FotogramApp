@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.myfotogramapp.Greeting
+import com.example.myfotogramapp.feed.FeedViewModel
 import com.example.myfotogramapp.post.viewmodel.PostViewModel
 import com.example.myfotogramapp.navigation.NavigationViewModel
 import com.example.myfotogramapp.navigation.Screen
@@ -32,7 +33,7 @@ data class BottomNavItem(
 )
 
 @Composable
-fun NavBar(navViewModel: NavigationViewModel, userViewModel: UserViewModel, postViewModel: PostViewModel, modifier: Modifier) {
+fun NavBar(navViewModel: NavigationViewModel, userViewModel: UserViewModel, postViewModel: PostViewModel, feedViewModel: FeedViewModel, modifier: Modifier) {
 
     val items = listOf(
         BottomNavItem("Create", Icons.Filled.AddBox, Icons.Outlined.AddBox),
@@ -75,7 +76,7 @@ fun NavBar(navViewModel: NavigationViewModel, userViewModel: UserViewModel, post
         }
     ) { innerPadding ->
         Column(modifier = Modifier.padding(innerPadding)) {
-            Greeting(navViewModel, userViewModel, postViewModel, modifier = Modifier.padding(innerPadding))
+            Greeting(navViewModel, userViewModel, postViewModel, feedViewModel,modifier = Modifier.padding(innerPadding))
         }
     }
 }

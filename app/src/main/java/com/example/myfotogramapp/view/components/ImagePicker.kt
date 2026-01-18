@@ -41,13 +41,14 @@ fun ImagePicker(
     var errorMsg by remember { mutableStateOf<String?>(null) }
     var showDialog by remember { mutableStateOf(false) }
 
-    val bitmap = try {
-        if(initialImage.isEmpty()) null
-        else viewPicture(initialImage).asImageBitmap()
-    } catch (e: Exception) {
-        null
+    val bitmap = remember(base64String) { // ← key: si ricalcola quando base64String cambia
+        try {
+            if (base64String.isEmpty()) null
+            else viewPicture(base64String).asImageBitmap()
+        } catch (e: Exception) {
+            null
+        }
     }
-
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->

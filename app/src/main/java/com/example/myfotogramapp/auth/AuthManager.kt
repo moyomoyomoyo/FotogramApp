@@ -1,10 +1,12 @@
 package com.example.myfotogramapp.auth
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class AuthManager(
@@ -23,12 +25,10 @@ class AuthManager(
 
     init {
         CoroutineScope(Dispatchers.IO).launch {
-            SessionPreferences.getSession(context).collect { data ->
-                _sessionId.value = data.sessionId.ifEmpty { null }
-                _userId.value = if (data.userId == -1) null else data.userId
-
-                _sessionLoaded.value = true
-            }
+            val data = SessionPreferences.getSession(context).first()
+            _sessionId.value = data.sessionId.ifEmpty { null }
+            _userId.value = if (data.userId == -1) null else data.userId
+            _sessionLoaded.value = true
         }
     }
 
@@ -36,6 +36,8 @@ class AuthManager(
         SessionPreferences.saveSession(context, SessionData(sessionId, userId))
         _sessionId.value = sessionId
         _userId.value = userId
+
+        Log.i("AuthManager", "Session saved: sessionId=$sessionId, userId=$userId")
     }
 
 //    suspend fun clearSession() {

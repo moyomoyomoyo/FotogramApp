@@ -13,6 +13,7 @@ import com.example.myfotogramapp.user.model.UserPicUpdateDto
 import com.example.myfotogramapp.user.model.toEntity
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.put
@@ -24,20 +25,20 @@ class UserRepository(context: Context, private val client: HttpClient) {
     private val userDao = db.userDao()
 
     // funzione crea utente che salva la sessione con auhtmanager
-    suspend fun createUser(authManager: AuthManager): Boolean{
+    suspend fun createUser(): SessionDataDto? {
         return try {
-            val session = client.post(ApiRoutes.createUser()).body<SessionDataDto>()
-            Log.i("KtorDemo", "Created user with id: ${session.userId}")
+            Log.i("KtorDemo", "🔵 POST ${ApiRoutes.createUser()}")
+            val response = client.post(ApiRoutes.createUser())
+            Log.i("KtorDemo", "🟡 Response status: ${response.status}")
 
-            authManager.saveSession(
-                sessionId = session.sessionId,
-                userId = session.userId
-            )
+            val session = response.body<SessionDataDto>()
+            Log.i("KtorDemo", "🟢 Created user: sessionId=${session.sessionId}, userId=${session.userId}")
 
-            true
-        } catch (e: Exception){
-            Log.e("KtorDemo", "Errore durante la creazione utente: ${e.message}", e)
-            false
+            session
+        } catch (e: Exception) {
+            Log.e("KtorDemo", "🔴 Errore createUser: ${e.message}", e)
+            e.printStackTrace()
+            null
         }
     }
 
@@ -114,7 +115,7 @@ class UserRepository(context: Context, private val client: HttpClient) {
     // funzione per fare unfollow ad un utente
     suspend fun unfollow(targetId: Int): Boolean {
         return try {
-            val response = client.put(ApiRoutes.unfollowUser(targetId))
+            val response = client.delete(ApiRoutes.unfollowUser(targetId))
             Log.i("KtorDemo", "Unfollowing id $targetId: ${response.status}")
             true
         } catch (e: Exception) {

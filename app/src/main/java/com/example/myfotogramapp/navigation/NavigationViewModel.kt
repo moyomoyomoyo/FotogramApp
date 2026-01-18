@@ -33,10 +33,16 @@ class NavigationViewModel : ViewModel() {
         currentScreen = Screen.POST_DETAIL
     }
 
-//    fun navigateToProfile(userId: Int, screen: Screen){
-//        selectedUserId = userId
-//        pastScreen = currentScreen
-//        currentScreen = Screen.PROFILE
-//    }
+    fun navigateToProfile(userId: Int){
+        selectedUserId = userId
+        pastScreen = currentScreen
+        currentScreen = Screen.PROFILE
+    }
+
+    fun navigateToOtherProfile(userId: Int){
+        selectedUserId = userId
+        pastScreen = currentScreen
+        currentScreen = Screen.PROFILE_OTHER_USER
+    }
 
 }
