@@ -97,7 +97,7 @@ fun LocationViewerDialog(
                         when{
                             userLocation == null && distanceKm == null && isNear == null -> {
                                 Text(
-                                    text = "📍 Post location",
+                                    text = "📍 Post location...",
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Medium,
                                     color = Color(0xFF7d0885)
@@ -105,7 +105,7 @@ fun LocationViewerDialog(
                             }
                             else -> {
                                 Text(
-                                    text = "Calculating distance...",
+                                    text = "📍 Post location",
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Medium,
                                     color = Color(0xFF7d0885)

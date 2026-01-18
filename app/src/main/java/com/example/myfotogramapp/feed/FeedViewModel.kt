@@ -31,7 +31,7 @@ class FeedViewModel(
         private set
 
     private val limit = 10
-    private var currentPostId: Int? = null
+//    private var currentPostId: Int? = null
 
 //    // List state utility
 //    var isLoading by mutableStateOf(false)
@@ -45,6 +45,10 @@ class FeedViewModel(
 
     private val _hasMore = MutableStateFlow(true)
     val hasMore: StateFlow<Boolean> = _hasMore
+
+    private val _newRefresh = MutableStateFlow(false)
+    val newRefresh: StateFlow<Boolean> = _newRefresh
+
 
     init {
         viewModelScope.launch {
@@ -81,12 +85,20 @@ class FeedViewModel(
                 repository.getFeed(limit = limit)
             }
 
-            // ← AGGIUNGI QUESTO
             Log.i("ViewModel", "Received post IDs: ${newPosts.map { it.id }}")
             Log.i("ViewModel", "Received ${newPosts.size} posts (limit=$limit)")
 
             if (newPosts.isNotEmpty()) {
-                postsList = postsList + newPosts
+                postsList = if (maxPostId == null) {
+                    Log.i("ViewModel", "Replacing posts list with new posts")
+                    newPosts.toList()
+                } else {
+                    Log.i("viewmodel", "aggiungo")
+                    postsList + newPosts
+
+                }
+
+                Log.i("ViewModel", "Posts list updated, total size: ${postsList.size}")
 
 //                // aggiorna il cursore con il più vecchio dei nuovi post
 //                val minId = newPosts.minOf { it.id }
@@ -110,6 +122,7 @@ class FeedViewModel(
         viewModelScope.launch {
             isRefreshing = true
             postsList = emptyList()
+            _newRefresh.value = true
             //postsRepository.reset()
             fetchNewPosts()
 //            currentPostId = null

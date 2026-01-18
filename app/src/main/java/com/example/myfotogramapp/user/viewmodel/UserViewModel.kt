@@ -101,6 +101,7 @@ class UserViewModel(private val repository: UserRepository, private val authMana
         viewModelScope.launch {
             currentUserId.first()?.let { userId ->
                 _currentUser.value = repository.getUserById(userId)
+                Log.i("UserViewModel", "Current user refreshed: ${_currentUser.value?.postsCount}")
             }
         }
     }
@@ -143,7 +144,11 @@ class UserViewModel(private val repository: UserRepository, private val authMana
     // funzione che data una lista di post carica gli utenti associati
     fun loadUsersForPosts(posts: List<PostEntity>, isRefresh: Boolean = false) {
         viewModelScope.launch {
-            if (isRefresh) { _postWithUsers.value = emptyList() }
+            if(isRefresh) {
+                // se è un refresh, resetto la lista
+                _postWithUsers.value = emptyList()
+                Log.i("UserViewModel", "REFRESHO")
+            }
 
             // identifico i post nuovi che non ho
             val currentPostIds = _postWithUsers.value.map { it.post.id }.toSet()
@@ -157,6 +162,7 @@ class UserViewModel(private val repository: UserRepository, private val authMana
                     isLoadingUser = true
                 )
             }
+            Log.i("UserViewModel", "Loading users for posts: ${newPosts.map { it.id }}")
 
             _postWithUsers.update { current ->
                 current + newPostStates  // Mantieni i vecchi + aggiungi i nuovi

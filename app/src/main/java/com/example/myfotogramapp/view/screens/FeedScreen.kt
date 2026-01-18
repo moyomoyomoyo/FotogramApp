@@ -40,14 +40,22 @@ fun FeedScreen(
 
     val postList = feedViewModel.postsList
     val postWithUsers by userViewModel.postWithUsers.collectAsState()
+    val postListRefresh = feedViewModel.newRefresh.collectAsState().value
     val isLoading by feedViewModel.isLoading.collectAsState()
     val hasMore by feedViewModel.hasMore.collectAsState()
 
-    LaunchedEffect(postList.size, feedViewModel.isRefreshing) {
-        if (postList.isNotEmpty()) {
-            userViewModel.loadUsersForPosts(postList, isRefresh = feedViewModel.isRefreshing)
-        }
+    LaunchedEffect(postList.size, postListRefresh) {
+        Log.i("FeedScreen", "Post list size changed: ${postList.size}, loading users...")
+        Log.i("FeedScreen", "isRefreshing: ${postListRefresh}")
+        userViewModel.loadUsersForPosts(postList, postListRefresh)
     }
+
+    for( post in postList) {
+        Log.i("FeedScreen", "Post ID: ${post.id}")
+    }
+
+    Log.i("FeedScreen", "Post with Users size: ${postWithUsers.size}")
+
 
     // Object tracking the State of a LazyRow or LazyColumn
     val lazyColState = rememberLazyListState(
