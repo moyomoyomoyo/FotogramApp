@@ -43,7 +43,6 @@ fun LocationViewerDialog(
     isNear: Boolean?,
     onDismiss: () -> Unit
 ) {
-    var isLoadingLocation by remember { mutableStateOf(true) }
 
     Dialog(
         onDismissRequest = onDismiss,
