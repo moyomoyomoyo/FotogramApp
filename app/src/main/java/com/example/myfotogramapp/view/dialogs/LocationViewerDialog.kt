@@ -94,24 +94,24 @@ fun LocationViewerDialog(
                     if (distanceKm == null || isNear == null || userLocation == null) {
                         Log.i("LocationViewerDialog", "User null: $distanceKm km e isNear=$isNear")
 
-                        when{
-                            userLocation == null && distanceKm == null && isNear == null -> {
-                                Text(
-                                    text = "📍 Post location...",
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    fontWeight = FontWeight.Medium,
-                                    color = Color(0xFF7d0885)
-                                )
-                            }
-                            else -> {
+//                        when{
+//                            userLocation == null && distanceKm == null && isNear == null -> {
                                 Text(
                                     text = "📍 Post location",
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Medium,
                                     color = Color(0xFF7d0885)
                                 )
-                            }
-                        }
+//                            }
+//                            else -> {
+//                                Text(
+//                                    text = "📍 Post location",
+//                                    style = MaterialTheme.typography.bodyLarge,
+//                                    fontWeight = FontWeight.Medium,
+//                                    color = Color(0xFF7d0885)
+//                                )
+//                            }
+//                        }
 
 
 
