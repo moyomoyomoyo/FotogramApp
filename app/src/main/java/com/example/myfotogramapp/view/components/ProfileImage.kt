@@ -44,8 +44,8 @@ fun ProfileImage(
                 .then(
                     if (isFriend) {
                         Modifier.border(
-                            width = 1.8.dp,
-                            color = Color(0xFFFFC107),
+                            width = 3.dp,
+                            color = Color(0xFF7d0885),
                             shape = CircleShape
                         )
                     } else Modifier.border(

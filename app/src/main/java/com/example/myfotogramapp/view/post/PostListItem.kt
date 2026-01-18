@@ -83,7 +83,6 @@ fun PostListItem(
                         color = if (user.isYourFollowing) Color(0xFF7d0885) else Color.Black
                     )
                 }
-                Spacer(modifier = Modifier.height(18.dp))
 
                 Spacer(modifier = Modifier.height(12.dp))
                 ShowPostPicture(post.contentPicture)

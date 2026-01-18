@@ -30,7 +30,7 @@ class FeedViewModel(
     var firstVisibleItemScrollOffset by mutableIntStateOf(0)
         private set
 
-    private val limit = 20
+    private val limit = 10
     private var currentPostId: Int? = null
 
 //    // List state utility
@@ -47,7 +47,6 @@ class FeedViewModel(
     val hasMore: StateFlow<Boolean> = _hasMore
 
     init {
-        // ✅ Aspetta che ci sia una sessione valida prima di caricare il feed
         viewModelScope.launch {
             authManager.sessionId
                 .filterNotNull() // Aspetta finché sessionId non è null
@@ -58,7 +57,6 @@ class FeedViewModel(
         }
     }
 
-
     fun fetchNewPosts(maxPostId: Int? = null) {
         if (_isLoading.value || !_hasMore.value) {
             Log.i("ViewModel", "Fetch aborted: isLoading=${_isLoading.value}")
@@ -68,13 +66,18 @@ class FeedViewModel(
         viewModelScope.launch {
             _isLoading.value = true
 
-            val fetchFromId = maxPostId ?: currentPostId
+            if(maxPostId != null) {
 
-            val newPosts = if (fetchFromId != null) {
-                Log.i("ViewModel", "Fetching posts before ID: $fetchFromId")
-                repository.getFeed(fetchFromId-1, limit = limit)
+                Log.i("ViewModel", "fetchNewPosts called with maxPostId: $maxPostId")
             } else {
-                Log.i("ViewModel", "Fetching initial posts")
+                Log.i("ViewModel", "fetchNewPosts called without maxPostId")
+            }
+
+            val newPosts = if (maxPostId != null) {
+                Log.i("FeedViewModel", "Fetching posts before ID: $maxPostId")
+                repository.getFeed(maxPostId - 1, limit = limit)
+            } else {
+                Log.i("FeedViewModel", "Fetching latest posts")
                 repository.getFeed(limit = limit)
             }
 
@@ -85,10 +88,10 @@ class FeedViewModel(
             if (newPosts.isNotEmpty()) {
                 postsList = postsList + newPosts
 
-                // aggiorna il cursore con il più vecchio dei nuovi post
-                val minId = newPosts.minOf { it.id }
-                currentPostId = minId
-                Log.i("ViewModel", "Cursor updated to: $currentPostId")
+//                // aggiorna il cursore con il più vecchio dei nuovi post
+//                val minId = newPosts.minOf { it.id }
+//                currentPostId = minId
+//                Log.i("ViewModel", "Cursor updated to: $currentPostId")
 
                 if (newPosts.size < limit) {
                     _hasMore.value = false
@@ -107,20 +110,13 @@ class FeedViewModel(
         viewModelScope.launch {
             isRefreshing = true
             postsList = emptyList()
-            resetFeed()
             //postsRepository.reset()
             fetchNewPosts()
+//            currentPostId = null
             //delay(2000)
             isRefreshing = false
             Log.i("PostviewModel", "refreshing fatto")
         }
-    }
-
-    private fun resetFeed() {
-        postsList = emptyList()
-        currentPostId = null
-        _hasMore.value = true
-        fetchNewPosts()
     }
 
     fun saveListScrollState(index: Int, offset: Int) {

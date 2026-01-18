@@ -92,12 +92,12 @@ fun LocationViewerDialog(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     if (distanceKm == null || isNear == null || userLocation == null) {
-                        Log.i("LocationViewerDialog", "User is too far: $distanceKm km e isNear=$isNear")
+                        Log.i("LocationViewerDialog", "User null: $distanceKm km e isNear=$isNear")
 
                         when{
-                            userLocation == null -> {
+                            userLocation == null && distanceKm == null && isNear == null -> {
                                 Text(
-                                    text = "Calculating distance...",
+                                    text = "📍 Post location",
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Medium,
                                     color = Color(0xFF7d0885)
@@ -105,7 +105,7 @@ fun LocationViewerDialog(
                             }
                             else -> {
                                 Text(
-                                    text = "📍 Post location",
+                                    text = "Calculating distance...",
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Medium,
                                     color = Color(0xFF7d0885)

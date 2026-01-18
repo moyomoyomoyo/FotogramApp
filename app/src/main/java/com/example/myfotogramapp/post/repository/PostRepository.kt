@@ -80,6 +80,11 @@ class PostRepository(context: Context, private val client: HttpClient) {
             missingIds.forEach { postId ->
                 getPostById(postId)
             }
+
+//            for (i in postsId) {
+//                getPostById(i)
+//            }
+
             val posts = postDao.getPostsByAuthorId(authorId)
             Log.i("KtorDemo", "Ottenuti ${posts.size} post di user id: $authorId")
 

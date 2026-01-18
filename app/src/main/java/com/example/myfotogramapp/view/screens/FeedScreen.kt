@@ -3,6 +3,7 @@ package com.example.myfotogramapp.view.screens
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -42,9 +43,9 @@ fun FeedScreen(
     val isLoading by feedViewModel.isLoading.collectAsState()
     val hasMore by feedViewModel.hasMore.collectAsState()
 
-    LaunchedEffect(postList.size) {
+    LaunchedEffect(postList.size, feedViewModel.isRefreshing) {
         if (postList.isNotEmpty()) {
-            userViewModel.loadUsersForPosts(postList)
+            userViewModel.loadUsersForPosts(postList, isRefresh = feedViewModel.isRefreshing)
         }
     }
 
@@ -74,8 +75,10 @@ fun FeedScreen(
         val total = lazyColState.layoutInfo.totalItemsCount
         val threshold = total - 3
         if (lastVisibleIndex != null && lastVisibleIndex >= threshold) {
-            if(hasMore && !isLoading){
-                feedViewModel.fetchNewPosts()
+            if (hasMore && !isLoading) {
+                val oldestPostId = feedViewModel.postsList.minOfOrNull { it.id }
+                Log.i("FeedScreen", "Loading more posts before ID: $oldestPostId")
+                feedViewModel.fetchNewPosts(maxPostId = oldestPostId)
             }
         }
     }
@@ -91,17 +94,17 @@ fun FeedScreen(
     ) {
 
         items(postWithUsers) { item ->
-            if (!item.isLoadingUser) {
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .height(200.dp)
-//                        .padding(8.dp),
-//                    contentAlignment = Alignment.Center
-//                ) {
-//                    CircularProgressIndicator(strokeWidth = 2.dp, color = Color(0xFF7D0885))
-//                }
-//            } else {
+            if (item.isLoadingUser) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp)
+                        .padding(8.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(strokeWidth = 2.dp, color = Color(0xFF7D0885))
+                }
+            } else {
                 item.user?.let {
                     PostListItem(
                         post = item.post,

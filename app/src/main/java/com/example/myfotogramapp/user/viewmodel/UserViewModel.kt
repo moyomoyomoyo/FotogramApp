@@ -141,13 +141,15 @@ class UserViewModel(private val repository: UserRepository, private val authMana
     }
 
     // funzione che data una lista di post carica gli utenti associati
-    fun loadUsersForPosts(posts: List<PostEntity>) {
+    fun loadUsersForPosts(posts: List<PostEntity>, isRefresh: Boolean = false) {
         viewModelScope.launch {
-            // 1. Identifica solo i POST NUOVI che non hai già
+            if (isRefresh) { _postWithUsers.value = emptyList() }
+
+            // identifico i post nuovi che non ho
             val currentPostIds = _postWithUsers.value.map { it.post.id }.toSet()
             val newPosts = posts.filter { it.id !in currentPostIds }
 
-            // 2. Crea gli stati iniziali SOLO per i nuovi
+            // creo gli stati iniziali solo per i nuovi
             val newPostStates = newPosts.map { post ->
                 PostWithUserState(
                     post = post,
@@ -156,12 +158,11 @@ class UserViewModel(private val repository: UserRepository, private val authMana
                 )
             }
 
-            // 3. AGGIUNGI invece di sostituire
             _postWithUsers.update { current ->
                 current + newPostStates  // Mantieni i vecchi + aggiungi i nuovi
             }
 
-            // 4. Carica gli utenti solo per i nuovi post
+            // carica gli utenti
             newPosts.forEach { post ->
                 launch {
                     val user = repository.getUserById(post.authorId)
