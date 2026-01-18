@@ -27,10 +27,10 @@ object SessionPreferences {
         }
     }
 
-    suspend fun clearSession(context: Context) {
-        context.sessionStore.edit { prefs ->
-            prefs[SESSION_ID] = ""
-            prefs[USER_ID] = -1
-        }
-    }
+//    suspend fun clearSession(context: Context) {
+//        context.sessionStore.edit { prefs ->
+//            prefs[SESSION_ID] = ""
+//            prefs[USER_ID] = -1
+//        }
+//    }
 }

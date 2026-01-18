@@ -21,6 +21,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,6 +43,8 @@ fun LocationViewerDialog(
     isNear: Boolean?,
     onDismiss: () -> Unit
 ) {
+    var isLoadingLocation by remember { mutableStateOf(true) }
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(usePlatformDefaultWidth = false)
@@ -62,13 +68,11 @@ fun LocationViewerDialog(
                         .fillMaxWidth()
                         .height(630.dp)
                 ) {
-//                    if (isNear != null) {
                     LocationViewer(
                         postLocation = postLocation,
                         userLocation = userLocation,
                         isNear = isNear?:false
                     )
-//                    }
                 }
 
                 // sezione sotto la mappa
@@ -91,17 +95,17 @@ fun LocationViewerDialog(
                         Log.i("LocationViewerDialog", "User is too far: $distanceKm km e isNear=$isNear")
 
                         when{
-                            userLocation ==null -> {
+                            userLocation == null -> {
                                 Text(
-                                    text = "📍 Post location",
+                                    text = "Calculating distance...",
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Medium,
                                     color = Color(0xFF7d0885)
                                 )
                             }
-                            else ->{
+                            else -> {
                                 Text(
-                                    text = "Calculating distance...",
+                                    text = "📍 Post location",
                                     style = MaterialTheme.typography.bodyLarge,
                                     fontWeight = FontWeight.Medium,
                                     color = Color(0xFF7d0885)

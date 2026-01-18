@@ -44,26 +44,13 @@ class UserViewModel(private val repository: UserRepository, private val authMana
         }
     }
 
-    // In UserViewModel
     fun createUser() {
         viewModelScope.launch {
-            Log.i("UserViewModel", "🔵 createUser INIZIATO")
-            try {
-                val session = repository.createUser()
-                Log.i("UserViewModel", "🟡 Repository risposta: session=$session")
-
-                if (session != null) {
-                    Log.i("UserViewModel", "🟡 Chiamo authManager.saveSession...")
-                    authManager.saveSession(
-                        sessionId = session.sessionId,
-                        userId = session.userId
-                    )
-                    Log.i("UserViewModel", "🟢 Sessione salvata con successo!")
-                } else {
-                    Log.e("UserViewModel", "🔴 Session è NULL dal repository!")
-                }
-            } catch (e: Exception) {
-                Log.e("UserViewModel", "🔴 ECCEZIONE in createUser: ${e.message}", e)
+            val create = repository.createUser(authManager)
+            if(create) {
+                Log.i("UserViewModel", "UTENTE CREATO CON SUCCESSO")
+            } else {
+                Log.e("UserViewModel", "ERRORE DURANTE LA CREAZIONE DELL'UTENTE")
             }
         }
     }

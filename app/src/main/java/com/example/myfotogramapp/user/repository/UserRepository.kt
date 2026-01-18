@@ -25,20 +25,20 @@ class UserRepository(context: Context, private val client: HttpClient) {
     private val userDao = db.userDao()
 
     // funzione crea utente che salva la sessione con auhtmanager
-    suspend fun createUser(): SessionDataDto? {
+    suspend fun createUser(authManager: AuthManager): Boolean{
         return try {
-            Log.i("KtorDemo", "🔵 POST ${ApiRoutes.createUser()}")
-            val response = client.post(ApiRoutes.createUser())
-            Log.i("KtorDemo", "🟡 Response status: ${response.status}")
+            val session = client.post(ApiRoutes.createUser()).body<SessionDataDto>()
+            Log.i("KtorDemo", "Created user with id: ${session.userId}")
 
-            val session = response.body<SessionDataDto>()
-            Log.i("KtorDemo", "🟢 Created user: sessionId=${session.sessionId}, userId=${session.userId}")
+            authManager.saveSession(
+                sessionId = session.sessionId,
+                userId = session.userId
+            )
 
-            session
-        } catch (e: Exception) {
-            Log.e("KtorDemo", "🔴 Errore createUser: ${e.message}", e)
-            e.printStackTrace()
-            null
+            true
+        } catch (e: Exception){
+            Log.e("KtorDemo", "Errore durante la creazione utente: ${e.message}", e)
+            false
         }
     }
 

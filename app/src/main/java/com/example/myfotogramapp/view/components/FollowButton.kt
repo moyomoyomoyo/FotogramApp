@@ -10,6 +10,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,11 @@ fun FollowButton(
     var isFollowing by remember { mutableStateOf(user.isYourFollowing) }
     var isLoading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(user.id, user.isYourFollowing) {
+        isFollowing = user.isYourFollowing
+        Log.i("FollowButton", "Sync: user ${user.id}, isFollowing=$isFollowing")
+    }
 
     Button(
         onClick = {
