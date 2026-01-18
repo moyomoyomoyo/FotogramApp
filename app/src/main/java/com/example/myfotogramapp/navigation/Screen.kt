@@ -6,5 +6,6 @@ enum class Screen {
     PROFILE,
     POST_DETAIL,
     PROFILE_SETTINGS,
-    PROFILE_OTHER_USER
+    PROFILE_OTHER_USER,
+    SAVED_POSTS
 }

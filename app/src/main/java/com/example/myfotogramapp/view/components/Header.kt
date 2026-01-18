@@ -173,6 +173,17 @@ fun Header(nav: NavigationViewModel, user: UserEntity? = null) {
 
                         Box(modifier = Modifier.size(32.dp)) {}
                     }
+
+                    Screen.SAVED_POSTS -> {
+                        Box(modifier = Modifier.size(32.dp)) {}
+
+                        Text(
+                            text = "Saved Posts",
+                            style = TextStyle(fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                        )
+
+                        Box(modifier = Modifier.size(32.dp)) {}
+                    }
                 }
 
 

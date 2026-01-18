@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -29,43 +30,73 @@ fun MainScreen(navViewModel: NavigationViewModel, userViewModel: UserViewModel, 
 
     val currentUser by userViewModel.currentUser.collectAsState()
     val myPosts = postViewModel.myPosts.collectAsState(initial = emptyList()).value
+    val savedPosts = postViewModel.savedPosts.collectAsState(initial = emptyList()).value
 
-    currentUser?.let{
-        when(navViewModel.currentScreen) {
+    currentUser?.let {
+        when (navViewModel.currentScreen) {
             Screen.FEED -> {
                 Header(navViewModel)
                 PullToRefreshBox(
-                    modifier = modifier.fillMaxSize().background(Color(0xff7d0885).copy(alpha=0.1f)),
+                    modifier = modifier.fillMaxSize()
+                        .background(Color(0xff7d0885).copy(alpha = 0.1f)),
                     isRefreshing = feedViewModel.isRefreshing,
                     onRefresh = { feedViewModel.refreshList() },
                 ) {
-                    FeedScreen (modifier = modifier, postViewModel = postViewModel, navViewModel = navViewModel, feedViewModel = feedViewModel,userViewModel = userViewModel)
+                    FeedScreen(
+                        modifier = modifier,
+                        postViewModel = postViewModel,
+                        navViewModel = navViewModel,
+                        feedViewModel = feedViewModel,
+                        userViewModel = userViewModel
+                    )
                 }
             }
+
             Screen.PROFILE -> {
                 ProfileScreen(it, myPosts, navViewModel, userViewModel, postViewModel, modifier)
             }
+
             Screen.CREATE_POST -> {
                 CreatePostScreen(navViewModel, postViewModel, userViewModel)
             }
+
             Screen.PROFILE_SETTINGS -> ProfileSettings(it, navViewModel, userViewModel, modifier)
 
             Screen.POST_DETAIL -> {
-                navViewModel.selectedPostId?.let { it1 -> PostDetail(it1, postViewModel, navViewModel, userViewModel, modifier) }
+                navViewModel.selectedPostId?.let { it1 ->
+                    PostDetail(
+                        it1,
+                        postViewModel,
+                        navViewModel,
+                        userViewModel,
+                        modifier
+                    )
+                }
             }
 
             Screen.PROFILE_OTHER_USER -> {
-                navViewModel.selectedUserId?.let { it1 -> ProfileUser(it1, navViewModel, userViewModel, postViewModel, modifier) }
+                navViewModel.selectedUserId?.let { it1 ->
+                    ProfileUser(
+                        it1,
+                        navViewModel,
+                        userViewModel,
+                        postViewModel,
+                        modifier
+                    )
+                }
             }
-        }
-    } ?: run {
-        Log.e("MainScreen", "Current user is null")
-        Column(
-            modifier = modifier.fillMaxSize().background(Color(0xff7d0885).copy(alpha = 0.1f)),
-        ) {
-            LoadingScreen()
-        }
 
+            Screen.SAVED_POSTS -> {
+                SavedPostsScreen(savedPosts, postViewModel, userViewModel, navViewModel, modifier)
+            }
+        } ?: run {
+            Log.e("MainScreen", "Current user is null")
+            Column(
+                modifier = modifier.fillMaxSize().background(Color(0xff7d0885).copy(alpha = 0.1f)),
+            ) {
+                LoadingScreen()
+            }
+
+        }
     }
-
 }

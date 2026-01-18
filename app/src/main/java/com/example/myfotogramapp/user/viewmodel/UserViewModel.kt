@@ -21,12 +21,21 @@ data class PostWithUserState(
     val isLoadingUser: Boolean
 )
 
+data class PostSavedState(
+    val post: PostEntity,
+    val user: UserEntity?,
+    val isLoadingUser: Boolean
+)
+
 class UserViewModel(private val repository: UserRepository, private val authManager: AuthManager) : ViewModel() {
 
     val currentUserId: StateFlow<Int?> = authManager.userId
 
     private val _currentUser = MutableStateFlow<UserEntity?>(null)
     val currentUser: StateFlow<UserEntity?> = _currentUser
+
+    private val _postSavedUsers = MutableStateFlow<List<PostSavedState>>(emptyList())
+    val postSavedUsers: StateFlow<List<PostSavedState>> = _postSavedUsers
 
     private val _postWithUsers = MutableStateFlow<List<PostWithUserState>>(emptyList())
     val postWithUsers: StateFlow<List<PostWithUserState>> = _postWithUsers
@@ -66,14 +75,15 @@ class UserViewModel(private val repository: UserRepository, private val authMana
             Log.e("UserViewModel", "USER ID NULL")
             return false
         }
-        var success = true
+        var foto = false
+        var utente = false
 
         if (picture.isNotEmpty()) {
             if (repository.updateUserProfilePicture(picture)) {
                 Log.i("UserViewModel", "FOTO PROFILO AGGIORNATA CON SUCCESSO")
+                foto = true
             } else {
                 Log.e("UserViewModel", "ERRORE DURANTE L'AGGIORNAMENTO DELLA FOTO PROFILO")
-                success = false
             }
         }
 
@@ -85,16 +95,16 @@ class UserViewModel(private val repository: UserRepository, private val authMana
 
         if (repository.updateUserInfo(newInfo)) {
             Log.i("UserViewModel", "INFO UTENTE AGGIORNATE CON SUCCESSO")
+            utente = true
         } else {
             Log.e("UserViewModel", "ERRORE DURANTE L'AGGIORNAMENTO DELLE INFO UTENTE")
-            success = false
         }
 
-        if(success) {
+        if(foto && utente) {
             refreshCurrentUser()
         }
 
-        return success
+        return true
     }
 
     fun refreshCurrentUser() {
@@ -120,7 +130,6 @@ class UserViewModel(private val repository: UserRepository, private val authMana
         val user = repository.getUserById(userId)
         _userFollowState.value = user
     }
-
 
     suspend fun follow(userIdToFollow: Int) {
         if (repository.follow(userIdToFollow)) {
@@ -200,6 +209,42 @@ class UserViewModel(private val repository: UserRepository, private val authMana
             }
 
             Log.i("UserViewModel", "Refreshed user $userId in all posts")
+        }
+    }
+
+    fun loadUsersForSavedPosts(posts: List<PostEntity>) {
+        viewModelScope.launch {
+            // identifico i post nuovi che non ho
+            val currentPostIds = _postSavedUsers.value.map { it.post.id }.toSet()
+            val newPosts = posts.filter { it.id !in currentPostIds }
+
+            // creo gli stati iniziali solo per i nuovi
+            val newPostStates = newPosts.map { post ->
+                PostSavedState(
+                    post = post,
+                    user = null,
+                    isLoadingUser = true
+                )
+            }
+            Log.i("UserViewModel", "Loading users for posts: ${newPosts.map { it.id }}")
+
+            _postSavedUsers.update { current ->
+                current + newPostStates  // Mantieni i vecchi + aggiungi i nuovi
+            }
+
+            // carica gli utenti
+            newPosts.forEach { post ->
+                launch {
+                    val user = repository.getUserById(post.authorId)
+                    _postSavedUsers.update { list ->
+                        list.map {
+                            if (it.post.id == post.id) {
+                                it.copy(user = user, isLoadingUser = false)
+                            } else it
+                        }
+                    }
+                }
+            }
         }
     }
 

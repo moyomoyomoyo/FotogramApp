@@ -7,6 +7,7 @@ import com.example.myfotogramapp.network.ApiRoutes
 import com.example.myfotogramapp.post.model.NewPost
 import com.example.myfotogramapp.post.model.PostDto
 import com.example.myfotogramapp.post.model.PostEntity
+import com.example.myfotogramapp.post.model.savePostDto
 import com.example.myfotogramapp.post.model.toEntity
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -119,6 +120,45 @@ class PostRepository(context: Context, private val client: HttpClient) {
             return emptyList()
         }
     }
+
+    // save post
+    suspend fun savePost(postId: Int) {
+        try {
+            client.put(ApiRoutes.savePost()) {
+                setBody(savePostDto(post = postId))
+            }
+
+            Log.i("simulation", "Post salvato id: $postId")
+
+        } catch (e: Exception){
+            Log.e("simulation", "Errore durante il salvataggio del post id $postId: ${e.message}", e)
+        }
+
+    }
+
+    suspend fun getSavedPost(): List<PostEntity> {
+        try {
+            val response = client.get(ApiRoutes.getSavedPosts())
+            val postsId = response.body<List<Int>>()
+
+            val savedPosts = postsId.mapNotNull { postId ->
+                getPostById(postId)
+            }
+
+            Log.i("simulation", "Presi post salvati count: ${savedPosts.size}")
+            return savedPosts
+        } catch (e: Exception){
+            Log.e("simulation", "Errore durante il recupero di post salvati ${e.message}", e)
+            return emptyList()
+        }
+
+    }
+
+
+
+
+
+
 
 //    fun clearPostDatabase() {
 //        runBlocking {

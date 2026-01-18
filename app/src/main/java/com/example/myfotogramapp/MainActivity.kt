@@ -105,7 +105,8 @@ class MainActivity : ComponentActivity() {
                         LoadingScreen()
                     }
 
-                    firstLaunch && sessionId != null -> {
+                    firstLaunch && sessionId != null && userId != null-> {
+                        Log.i("MainActivity", "firstLaunch= é true come??????????????")
                         LoginScreen(
                             onLoginCompleted = { username, picture ->
                                 val success = userViewModel.updateUserInfo(username = username, bio = "", dateOfBirth = "", picture = picture)

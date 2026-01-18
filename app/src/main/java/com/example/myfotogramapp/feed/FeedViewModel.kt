@@ -61,7 +61,7 @@ class FeedViewModel(
         }
     }
 
-    fun fetchNewPosts(maxPostId: Int? = null) {
+    fun fetchNewPosts(maxPostId: Int? = 11) {
         if (_isLoading.value || !_hasMore.value) {
             Log.i("ViewModel", "Fetch aborted: isLoading=${_isLoading.value}")
             return

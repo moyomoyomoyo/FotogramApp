@@ -2,7 +2,7 @@ package com.example.myfotogramapp.network
 
 object ApiRoutes {
 
-    private const val BASE_URL = "https://develop.ewlab.di.unimi.it/mc/2526"
+    private const val BASE_URL = "https://server2526-main.vercel.app"
 
     //------- USER
     fun createUser() = "$BASE_URL/user"
@@ -17,4 +17,8 @@ object ApiRoutes {
     fun getPost(id: Int) = "$BASE_URL/post/$id"
     fun getPostsByAuthor(authorId: Int) = "$BASE_URL/post/list/$authorId"
     fun getFeed() = "$BASE_URL/feed"
+
+    //------- SALVATAGGIO POST
+    fun savePost() = "$BASE_URL/exercise_1/saved"
+    fun getSavedPosts() = "$BASE_URL/exercise_1/saved"
 }

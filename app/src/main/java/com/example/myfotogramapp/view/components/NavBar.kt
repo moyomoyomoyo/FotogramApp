@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddBox
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.AddBox
+import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Icon
@@ -38,6 +40,7 @@ fun NavBar(navViewModel: NavigationViewModel, userViewModel: UserViewModel, post
     val items = listOf(
         BottomNavItem("Create", Icons.Filled.AddBox, Icons.Outlined.AddBox),
         BottomNavItem("Feed", Icons.Filled.Home, Icons.Outlined.Home),
+        BottomNavItem("Saved Posts", Icons.Filled.Bookmark, Icons.Outlined.Bookmark),
         BottomNavItem("Profile", Icons.Filled.Person, Icons.Outlined.Person)
     )
 
@@ -49,7 +52,8 @@ fun NavBar(navViewModel: NavigationViewModel, userViewModel: UserViewModel, post
                     val screenForIndex = when (index) {
                         0 -> Screen.CREATE_POST
                         1 -> Screen.FEED
-                        2 -> Screen.PROFILE
+                        2 -> Screen.SAVED_POSTS
+                        3 -> Screen.PROFILE
                         else -> Screen.FEED
                     }
 

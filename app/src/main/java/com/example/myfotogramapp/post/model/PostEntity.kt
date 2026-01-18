@@ -62,3 +62,8 @@ data class NewPost(
     val contentPicture: String,
     val location: LocationDto? = null
 )
+
+@Serializable
+data class savePostDto(
+    val post: Int
+)

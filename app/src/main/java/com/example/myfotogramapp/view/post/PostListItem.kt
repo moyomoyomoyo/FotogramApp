@@ -1,8 +1,10 @@
 package com.example.myfotogramapp.view.post
 
 
+import android.util.Log
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,8 +12,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Verified
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -82,6 +88,23 @@ fun PostListItem(
                         fontWeight = FontWeight.Bold,
                         color = if (user.isYourFollowing) Color(0xFF7d0885) else Color.Black
                     )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        contentAlignment = Alignment.CenterEnd
+                    ){
+                        Icon(
+                            imageVector = Icons.Default.Bookmark,
+                            contentDescription = "Verified Badge",
+                            tint = Color(0xFF7d0885),
+                            modifier = Modifier
+                                .size(35.dp)
+                                .clickable {
+                                    Log.i("Simulazione Esame: post ID:","${post.id}  aggiunto alla lista dei post salvati.")
+                                    postViewModel.savePost(post.id)
+                                }
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))

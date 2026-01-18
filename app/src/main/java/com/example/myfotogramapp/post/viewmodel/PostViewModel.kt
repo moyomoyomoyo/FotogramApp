@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.myfotogramapp.auth.AuthManager
 import com.example.myfotogramapp.post.model.NewPost
 import com.example.myfotogramapp.post.model.PostEntity
@@ -20,11 +21,15 @@ class PostViewModel(private val repository: PostRepository, authManager: AuthMan
     private val _myPosts = MutableStateFlow<List<PostEntity>>(emptyList())
     val myPosts = _myPosts.asStateFlow()
 
+    private val _savedPosts = MutableStateFlow<List<PostEntity>>(emptyList())
+    val savedPosts = _savedPosts.asStateFlow()
+
     init {
         viewModelScope.launch {
             currentUserId.collect { userId ->
                 if (userId != null) {
                     getMyPosts()
+                    getSavedPost()
                 }
             }
         }
@@ -63,5 +68,32 @@ class PostViewModel(private val repository: PostRepository, authManager: AuthMan
             null
         }
     }
+
+     fun savePost(postId: Int){
+         viewModelScope.launch {
+             try{
+                 repository.savePost(postId)
+                 getSavedPost()
+             } catch (e: Exception){
+                 Log.e("PostViewModel", "Errore salvataggio post: ${e.message}")
+             }
+         }
+    }
+
+     private fun getSavedPost(){
+        viewModelScope.launch {
+            try{
+                val post = repository.getSavedPost()
+                if(post.isNotEmpty()){
+                    _savedPosts.value = post
+                    Log.i("PostViewModel", "Post salvati caricati, count: ${post.size} ")
+                }
+            } catch (e: Exception){
+                Log.e("PostViewModel", "Errore get post salvati: ${e.message}")
+            }
+        }
+    }
+
+
 
 }
