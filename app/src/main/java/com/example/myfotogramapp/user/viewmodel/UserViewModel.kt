@@ -75,36 +75,39 @@ class UserViewModel(private val repository: UserRepository, private val authMana
             Log.e("UserViewModel", "USER ID NULL")
             return false
         }
-        var foto = false
-        var utente = false
+        // variabili per tenere traccia del successo delle operazioni
+        var success = true
 
+        // aggiorno la foto del profilo se è stata fornita
         if (picture.isNotEmpty()) {
             if (repository.updateUserProfilePicture(picture)) {
                 Log.i("UserViewModel", "FOTO PROFILO AGGIORNATA CON SUCCESSO")
-                foto = true
             } else {
+                success = false
                 Log.e("UserViewModel", "ERRORE DURANTE L'AGGIORNAMENTO DELLA FOTO PROFILO")
             }
         }
 
+        // aggiorno le altre info utente
         val newInfo = UserInfoUpdateDto(
             username = username,
             bio = bio,
             dateOfBirth = dateOfBirth,
         )
 
+        // aggiorno le info utente
         if (repository.updateUserInfo(newInfo)) {
             Log.i("UserViewModel", "INFO UTENTE AGGIORNATE CON SUCCESSO")
-            utente = true
         } else {
+            success = false
             Log.e("UserViewModel", "ERRORE DURANTE L'AGGIORNAMENTO DELLE INFO UTENTE")
         }
 
-        if(foto && utente) {
+        if(success) {
             refreshCurrentUser()
         }
 
-        return true
+        return success
     }
 
     fun refreshCurrentUser() {
