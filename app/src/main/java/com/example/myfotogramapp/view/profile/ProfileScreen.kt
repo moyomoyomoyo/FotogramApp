@@ -1,6 +1,5 @@
 package com.example.myfotogramapp.view.profile
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
