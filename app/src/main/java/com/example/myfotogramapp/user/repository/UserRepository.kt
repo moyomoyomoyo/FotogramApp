@@ -51,7 +51,7 @@ class UserRepository(context: Context, private val client: HttpClient) {
             }
 
             val userUpdated = response.body<UserDto>()
-            userDao
+            userDao.insertUser(userUpdated.toEntity())
             Log.i("KtorDemo", "Utente aggiornato: ${userUpdated.id}")
 
 
